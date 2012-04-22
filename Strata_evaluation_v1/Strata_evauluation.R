@@ -1,6 +1,6 @@
 # Purpose :  Evaluation of stratifications for study area ??;
 # Last update : April 2012
-# Note : ;
+# Note : testing different stratification calculus;
 
 
 # setwd ("F:/R/Strata_evaluation")
