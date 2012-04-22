@@ -22,7 +22,7 @@ str(strata_detail)
 
 # Convert strata names to factors:
 strata_data$p_st <- as.factor(strata_data$p_st)
-strata_data$o_st <- as.factor(paste("c", strata_data$o_st, sep="_"))
+strata_data$o_st <- as.factor(paste("o", strata_data$o_st, sep="_"))
 # Optimize stratum averages per strata
 n_st <- NULL
 for(j in 1:length(levels(strata_data$o_st))){
