@@ -25,15 +25,21 @@ strata_data$p_st <- as.factor(strata_data$p_st)
 strata_data$o_st <- as.factor(paste("o", strata_data$o_st, sep="_"))
 # Optimize stratum averages per strata
 n_st <- NULL
+s_st <- NULL
 for(j in 1:length(levels(strata_data$o_st))){
       x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C","o_st")]
       n_st[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=mean)
+      s_st[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=var)
 }
 n_st <- do.call(rbind, n_st)
 n_st$o_st <- sapply(strsplit(row.names(n_st), "\\."), function(x){x[1]})
+s_st <- do.call(rbind, s_st)
+s_st$o_st <- sapply(strsplit(row.names(s_st), "\\."), function(x){x[1]})
 View(n_st)
+View(s_st)
 
-#to here 
+
+# TH: these are just simple examples; you need to adjust the code to fit your purpose;
 
 
 n_st[n_st$o_st=="c_1",]
