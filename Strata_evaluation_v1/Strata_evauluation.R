@@ -18,11 +18,19 @@ strata_detail$p_st_a <- with(strata_detail, (p_cell_n) * (cell_res^2))
 strata_detail$p_st_ra <- (p_st_a/sum(p_st_a)) 
 strata_detail$o_st_a <- with(strata_detail, (o_cell_n) * (cell_res^2))
 strata_detail$o_st_ra <- (o_st_a/sum(o_st_a)) 
+strata_detail$p_ah_nh <- with(strata_detail, (p_st_ra)/(p_count))
+ 
+
 str(strata_detail)
 
 # Convert strata names to factors:
 strata_data$p_st <- as.factor(strata_data$p_st)
 strata_data$o_st <- as.factor(paste("o", strata_data$o_st, sep="_"))
+
+#Attach data from strata_detail$p_ah_nh
+
+
+
 # Optimize stratum averages per strata
 n_st <- NULL
 s_st <- NULL
