@@ -5,11 +5,6 @@
                     #http://cran.r-project.org/doc/manuals/R-lang.html
 
 
-strata_detail$o_st_ID <- as.factor(paste("o", strata_detail$o_st_ID, sep="_"))      #convert optimised strata to factor in strata_detail
-
-
- #add colums with areal proportions from strata_detail
-
 
 
  strata_detail$eq8.9d <-
@@ -17,13 +12,6 @@ strata_detail$o_st_ID <- as.factor(paste("o", strata_detail$o_st_ID, sep="_"))  
  
 
  # multiplicatio by strata:
-strata_detail$p_st_a <- with(strata_detail, (p_cell_n) * (cell_res^2))
-strata_detail$p_st_ra <- (p_st_a/sum(p_st_a))
-strata_detail$o_st_a <- with(strata_detail, (o_cell_n) * (cell_res^2))
-strata_detail$o_st_ra <- (o_st_a/sum(o_st_a))
-strata_detail$p_ah_nh <- with(strata_detail, (p_st_ra)/(p_count))
-
-str(strata_detail)
 
 
 
@@ -43,8 +31,16 @@ eq_8.9n$o_st <- sapply(strsplit(row.names(eq_8.9n), "\\."), function(x){x[1]})
 #s_st$o_st <- sapply(strsplit(row.names(s_st), "\\."), function(x){x[1]})
 View(eq_8.9n)
 
-8.9n <- match(
+eq_8.9n$p_ah_nh <- match(eq_8.9n$o_st,strata_detail$p_ah_nh) #designator missing... ? 
+ 
+"%in%" <- ...
+ 
+ #try 'while' loops??
 
+eq_8.9n$p_ah_nh <- if(eq_8.9n$o_st==strata_detail$o_st_ID) {eq_8.9n$p_ah_nh <- strata_detail$p_ah_nh} #row conflicts..
+
+eq_8.9n$p_ah_nh <- if(eq_8.9n$o_st==strata_detail$o_st_ID) {match eq_8.9n$p_ah_nh <- strata_detail$p_ah_nh} #row conflicts..
+ 
 
 #View(s_st)
 
