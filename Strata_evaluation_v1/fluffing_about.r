@@ -2,68 +2,83 @@
 
      # playing around...
 
+#notes....
+
                     #http://cran.r-project.org/doc/manuals/R-lang.html
 
 
+#working bits...
+
+    #merge - of different length vectors (successful)
+      eq_8.9n <- merge(eq_8.9n, strata_detail, by="o_st")
+
+    #with - simple math 
+      eq_8.9n$eq_8.9n <- with(eq_8.9n, (p_ah_nh)*(x))
 
 
- strata_detail$eq8.9d <-
- 
- 
-
- # multiplicatio by strata:
-
-
-
-eq_8.9n <- NULL       #numerator of Zrd (mean of intersection), requires reference to cells in starta_detail based on prior area of intersecting strata & prior allocation
-
-
-for(j in 1:length(levels(strata_data$o_st))){
-      x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C","o_st")]
-      eq_8.9n[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=sum)
+#not working but interesting..
       
-
-     # s_st[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=var)
-}
-eq_8.9n <- do.call(rbind, eq_8.9n)
-eq_8.9n$o_st <- sapply(strsplit(row.names(eq_8.9n), "\\."), function(x){x[1]})
-#s_st <- do.call(rbind, s_st)
-#s_st$o_st <- sapply(strsplit(row.names(s_st), "\\."), function(x){x[1]})
-View(eq_8.9n)
-
-#merge??
-
-strata_detail <- strata_detail #not needed if script is run from beginning
-eq_8.9n <- merge(eq_8.9n, strata_detail, by="o_st")
-
-# strata_detail$p_st_a <- with(strata_detail, (p_cell_n) * (cell_res^2))
-eq_8.9n$eq_8.9n <- with(eq_8.9n, (p_ah_nh)*(x))
+      #rename col x in eq_8.9n to sum_c
+      # names( X)[ names[ X] == "bob"]<-"sue"
+      names(eq_8.9n)[names[eq_8.9n] == "x"] <- "sum_C" #Error in names[eq_8.9n] : object of type 'builtin' is not subsettable
+      
  
+      
+#####################################################################################
+      
+      
+#rename eq_8.9n$x to sum_c
+      
+     eq_8.9n$sum_c <- eq_8.9n$x
+      
+     eq_8.9n$x <- NULL 
+
+#eq_8.9d
+      
+      eq_8.9d <- Zrd
+      
+        eq_8.9d
+      
  #now need number of intersects per stratum... n_hd to be attached to eq_8.9n
  
- n_hd = NULL
-
  strata_data$occr <- (1)
  strata_data$occr <- as.numeric(strata_data$occr)
  
+ n_hd = NULL
 
  for(j in 1:length(levels(strata_data$o_st))){
-  y <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st", "occr", "o_st")]
-   n_hd[[levels(strata_data$o_st)[j]]] <- aggregate(y[,c("occr")], by=list(y$p_st), FUN=sum)
+  x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st", "occr", "o_st")]
+   n_hd[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("occr")], by=list(y$p_st), FUN=sum)
+ }
+ 
+  
+ n_hd <- do.call(rbind, n_hd)
+
+
+
+  
+ ##combine??????########################################################################################
+ 
+ strata_data$occr <- (1)
+ strata_data$occr <- as.numeric(strata_data$occr)
+ 
+ eq_8.9n <- NULL
+ 
+ for(j in 1:length(levels(strata_data$o_st))){
+   y <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","c_pred", "occr", "o_st")]
+   eq_8.9n[[levels(strata_data$o_st)[j]]] <- aggregate(y[,c("occr")], by=list(y$p_st), FUN=sum)
+   
+   eq_8.9n[[levels(strata_data$o_st)[j]]] <- aggregate(y[,c("c_pred")], by=list(y$p_st), FUN=sum)
  }
  
  
- 
- 
-n_hd <- do.call(rbind, n_hd)
+ n_hd <- do.call(rbind, n_hd)
  n_hd$o_st <- sapply(strsplit(row.names(n_hd), "\\."), function(x){x[1]})
+ 
+        
   
- ##
- 
- eq_8.9n <- NULL       
- 
- for(j in 1:length(levels(strata_data$o_st))){ 
-   x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C","o_st")]
+ for(j in 1:length(levels(strata_data$o_st))){
+   x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C","o_st", "occr")]
    eq_8.9n[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=sum)
  }
  
@@ -80,7 +95,7 @@ n_hd <- do.call(rbind, n_hd)
  
  
   
-  aggregate(x[,c("p_st")], by=list(x$p_st), FUN=count)
+  aggregate(x[,c("p_st")], by=list(x$p_st), FUN=..)
    
    
  i <- aggregate(strata_data$p_st - strata_data$o_st, n_hd, length)
