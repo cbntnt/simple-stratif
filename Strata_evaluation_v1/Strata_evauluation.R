@@ -28,25 +28,50 @@ strata_data$o_st <- as.factor(paste("o", strata_data$o_st, sep="_"))
 strata_detail$o_st_ID <- as.factor(paste("o", strata_detail$o_st_ID, sep="_"))      #convert optimised strata to factor in strata_detail
 
 #numerator of Zrd (mean of intersection), requires reference to cells in starta_detail based on prior area of intersecting strata & prior allocation
-eq_8.9n <- NULL       
+Zrd <- NULL       
 
 for(j in 1:length(levels(strata_data$o_st))){
   x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C","o_st")]
-  eq_8.9n[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=sum)
+  Zrd[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=sum)
 }
 
-eq_8.9n <- do.call(rbind, eq_8.9n)
-eq_8.9n$o_st <- sapply(strsplit(row.names(eq_8.9n), "\\."), function(x){x[1]})
+Zrd <- do.call(rbind, Zrd)
+Zrd$o_st <- sapply(strsplit(row.names(Zrd), "\\."), function(x){x[1]})
 
 #Attach data from strata_detail$p_ah_nh ...rename column, merge & finalise
 names(strata_detail)[names(strata_detail)=="o_st_ID"]="o_st"
-eq_8.9n <- merge(eq_8.9n, strata_detail, by="o_st")
-eq_8.9n$eq_8.9n <- with(eq_8.9n, (p_ah_nh)*(x))
+Zrd <- merge(Zrd, strata_detail, by="o_st")
+
+Zrd$sum_c <- Zrd$x
+
+Zrd$x <- NULL 
+
+Zrd$eq_8.9n <- with(Zrd, (p_ah_nh)*(sum_c))
+
+
+#number of intersects per opt & prior stratum.
+
+strata_data$occr <- (1)
+strata_data$occr <- as.numeric(strata_data$occr)
+
+n_hd = NULL
+
+for(j in 1:length(levels(strata_data$o_st))){
+  x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st", "occr", "o_st")]
+  n_hd[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("occr")], by=list(x$p_st), FUN=sum)
+}
+
+n_hd <- do.call(rbind, n_hd)
+
+#n_hd to be attached to Zrd... up to denominator...
+
+Zrd$n_hd <- n_hd$x
+Zrd$eq_8.9d <-with(Zrd, (p_st_ra)*((n_hd)/(p_count)))
 
 
 
 
-
+##### somethin is wrong with 8.9n... double check!
 
 
 
