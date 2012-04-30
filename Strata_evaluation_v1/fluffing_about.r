@@ -27,26 +27,32 @@
 #####################################################################################
       
       
-#rename eq_8.9n$x to sum_c
-      
-     eq_8.9n$sum_c <- eq_8.9n$x
-      
-     eq_8.9n$x <- NULL 
+            
 
-#eq_8.9d
       
-      eq_8.9d <- Zrd
+     
       
-        eq_8.9d
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       
  #now need number of intersects per stratum... n_hd to be attached to eq_8.9n
  
- strata_data$occr <- (1)
- strata_data$occr <- as.numeric(strata_data$occr)
- 
- n_hd = NULL
+optim_strata = NULL
 
- for(j in 1:length(levels(strata_data$o_st))){
+ for(j in 1:length(levels(Zrd$o_st))){
   x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st", "occr", "o_st")]
    n_hd[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("occr")], by=list(y$p_st), FUN=sum)
  }
@@ -54,23 +60,14 @@
   
  n_hd <- do.call(rbind, n_hd)
 
+      
+      
+      
+      
+      
 
-###### #attach p_st
+############ other stuff ##################
       
-      Zrd <- NULL       
-      
-      for(j in 1:length(levels(strata_data$o_st))){
-        x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C","o_st")]
-        Zrd[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=sum)
-      }
-      
-      Zrd <- do.call(rbind, Zrd)
-      Zrd$o_st <- sapply(strsplit(row.names(Zrd), "\\."), function(x){x[1]})
-  # include p_st...
-      Zrd$p_st <- sapply(strsplit(row.names(Zrd), "\\."), function(x){x[2]})
-     
-      
- ##
  
  
  grp = c(1,1,1, 1,2, 2,2) 
@@ -88,15 +85,16 @@
   
  y <- length(levels(strata_data$o_st))
  
+
+  
+      
+      n_st[n_st$o_st=="c_1",]
+      
+#########
  
  
  
- 
- 
- 
- 
- 
- 
+  
  #use plyr...?
  #split into list 
 p_ah_nh <- split(eq_8.9n, list(eq_8.9n$o_st, eq_8.9n$Group.1)
