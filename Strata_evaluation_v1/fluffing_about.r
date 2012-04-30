@@ -55,36 +55,21 @@
  n_hd <- do.call(rbind, n_hd)
 
 
-
-  
- ##combine??????########################################################################################
- 
- strata_data$occr <- (1)
- strata_data$occr <- as.numeric(strata_data$occr)
- 
- eq_8.9n <- NULL
- 
- for(j in 1:length(levels(strata_data$o_st))){
-   y <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","c_pred", "occr", "o_st")]
-   eq_8.9n[[levels(strata_data$o_st)[j]]] <- aggregate(y[,c("occr")], by=list(y$p_st), FUN=sum)
-   
-   eq_8.9n[[levels(strata_data$o_st)[j]]] <- aggregate(y[,c("c_pred")], by=list(y$p_st), FUN=sum)
- }
- 
- 
- n_hd <- do.call(rbind, n_hd)
- n_hd$o_st <- sapply(strsplit(row.names(n_hd), "\\."), function(x){x[1]})
- 
-        
-  
- for(j in 1:length(levels(strata_data$o_st))){
-   x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C","o_st", "occr")]
-   eq_8.9n[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=sum)
- }
- 
- eq_8.9n <- do.call(rbind, eq_8.9n)
- eq_8.9n$o_st <- sapply(strsplit(row.names(eq_8.9n), "\\."), function(x){x[1]})
- 
+###### #attach p_st
+      
+      Zrd <- NULL       
+      
+      for(j in 1:length(levels(strata_data$o_st))){
+        x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C","o_st")]
+        Zrd[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C")], by=list(x$p_st), FUN=sum)
+      }
+      
+      Zrd <- do.call(rbind, Zrd)
+      Zrd$o_st <- sapply(strsplit(row.names(Zrd), "\\."), function(x){x[1]})
+  # include p_st...
+      Zrd$p_st <- sapply(strsplit(row.names(Zrd), "\\."), function(x){x[2]})
+     
+      
  ##
  
  

@@ -27,7 +27,7 @@ strata_data$p_st <- as.factor(strata_data$p_st)
 strata_data$o_st <- as.factor(paste("o", strata_data$o_st, sep="_"))
 strata_detail$o_st_ID <- as.factor(paste("o", strata_detail$o_st_ID, sep="_"))      #convert optimised strata to factor in strata_detail
 
-#numerator of Zrd (mean of intersection), requires reference to cells in starta_detail based on prior area of intersecting strata & prior allocation
+#numerator of Zrd (mean of intersection), requires reference to cells in strata_detail based on prior area of intersecting strata & prior allocation
 Zrd <- NULL       
 
 for(j in 1:length(levels(strata_data$o_st))){
@@ -37,17 +37,21 @@ for(j in 1:length(levels(strata_data$o_st))){
 
 Zrd <- do.call(rbind, Zrd)
 Zrd$o_st <- sapply(strsplit(row.names(Zrd), "\\."), function(x){x[1]})
+Zrd$p_st <- Zrd$Group.1
+
+Zrd$combo <- sapply(strsplit(row.names(Zrd), "\\_"), function(x){x[2]})
 
 #Attach data from strata_detail$p_ah_nh ...rename column, merge & finalise
 names(strata_detail)[names(strata_detail)=="o_st_ID"]="o_st"
-Zrd <- merge(Zrd, strata_detail, by="o_st")
+names(strata_detail)[names(strata_detail)=="p_st_ID"]="p_st"
+Zrd <- merge(strata_detail, Zrd, by="p_st")
 
-Zrd$sum_c <- Zrd$x
-
-Zrd$x <- NULL 
-
+names(Zrd)[names(Zrd)=="x"]="sum_c"
+Zrd$o_st.x <- NULL
+names(Zrd)[names(Zrd)=="o_st.y"]="o_st"
+Zrd$Group.1 <- NULL
+Zrd <- Zrd[order(Zrd$combo),]
 Zrd$eq_8.9n <- with(Zrd, (p_ah_nh)*(sum_c))
-
 
 #number of intersects per opt & prior stratum.
 
@@ -63,15 +67,16 @@ for(j in 1:length(levels(strata_data$o_st))){
 
 n_hd <- do.call(rbind, n_hd)
 
-#n_hd to be attached to Zrd... up to denominator...
-
 Zrd$n_hd <- n_hd$x
 Zrd$eq_8.9d <-with(Zrd, (p_st_ra)*((n_hd)/(p_count)))
 
 
 
-
 ##### somethin is wrong with 8.9n... double check!
+
+
+
+
 
 
 
