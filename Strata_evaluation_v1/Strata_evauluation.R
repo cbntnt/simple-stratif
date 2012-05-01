@@ -12,7 +12,7 @@ strata_detail <- read.csv("control_file.csv")
 
 #single inputs
 cell_res <- 30 #resolution of grid cells in meters
-
+p_samp_var_SI <- 0.16 #sampling variance from prior stratification 'if' the sample were random 
 
 # multiplication by strata: 
 strata_detail$p_st_a <- with(strata_detail, (p_cell_n) * (cell_res^2))
@@ -71,6 +71,9 @@ for(j in 1:length(levels(strata_data$o_st))){
 
 n_hd <- do.call(rbind, n_hd)
 Zrd$n_hd <- n_hd$x
+
+n_hd = NULL
+
 Zrd$eq_8.9d <-with(Zrd, (p_st_ra)*((n_hd)/(p_count)))
 
 # ah = (ah^2/(nh(nh-1))  
@@ -99,7 +102,10 @@ for(j in 1:length(levels(Zrd$o_st))){
 }
 
 eq_8.9d <- do.call(rbind, eq_8.9d)
+
 optim_strata$eq_8.9d <- eq_8.9d$x
+
+eq_8.9d <-NULL
 
 #Means of optimal strata  
 optim_strata$Zrd <- with(optim_strata, (optim_strata$eq_8.9n)/(optim_strata$eq_8.9d))
@@ -141,22 +147,149 @@ Zrd$Zshd <- cbind(Zshd$x)
 
   strata_data$xx2 <- with(strata_data, ((pred_C)-(Zshd))^2)   
 
+Zshd <- NULL
   
 # xx3 = nh(1-nhd/nh)
 Zrd$xx3 <- with(Zrd, (p_count)*(1-((n_hd)/(p_count))))
 
 
+#attach stratum averages 
 
-#...................to here................
-
+Zrd <- merge(Zrd, optim_strata, by.x = "o_st", by.y = "Group.1")
+Zrd$eq_8.9n.y <- NULL
+Zrd$eq_8.9d.y <- NULL
+Zrd$x <- NULL
 
 # xx4 = (Zshd-zRd)^2
-Zrd$xx4 <- with(Zrd, (Zshd)-(Zrd))
+Zrd$xx4 <- with(Zrd, ((Zshd)-(Zrd))^2)
 
 
-#...................to here................  
+# xx5  
+  #sum xx2 per stratum
+
+sum_xx2 <- NULL
+
+for(j in 1:length(levels(strata_data$o_st))){
+  x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","xx2","o_st")]
+  sum_xx2[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("xx2")], by=list(x$p_st), FUN=sum)
+}
+
+sum_xx2 <- do.call(rbind, sum_xx2)
+Zrd$sum_xx2 <- cbind(sum_xx2$x)
+
+Zrd$xx5 <- with(Zrd, ((ah)*((sum_xx2)+(xx3)*(xx4))))
+
+sum_xx2 <- NULL
+
+# sub_xx6, sum_xx5 & xx6
+
+Zrd$sub_xx6 <- with(Zrd,(p_st_ra)*((n_hd)/(p_count)))
+
+xx5 = NULL
+
+Zrd$o_st <- as.factor(Zrd$o_st)
+
+for(j in 1:length(levels(Zrd$o_st))){
+  x <- Zrd[Zrd$o_st==levels(Zrd$o_st)[j],c("o_st", "xx5", "sub_xx6")]
+  xx5[[levels(Zrd$o_st)[j]]] <- aggregate(x[,c("xx5")], by=list(x$o_st), FUN=sum)
+  
+}
+
+xx5 <- do.call(rbind, xx5)
+optim_strata$xx5 <- xx5$V1
+
+xx5 = NULL
+
+xx6 = NULL
+
+for(j in 1:length(levels(Zrd$o_st))){
+  x <- Zrd[Zrd$o_st==levels(Zrd$o_st)[j],c("o_st", "xx5", "sub_xx6")]
+  xx6[[levels(Zrd$o_st)[j]]] <- aggregate(x[,c("sub_xx6")], by=list(x$o_st), FUN=sum)
+  
+}
+
+xx6 <- do.call(rbind, xx6)
+optim_strata$xx6 <- xx6$x
+
+xx6 = NULL
+
+# calc VZrd 
+
+optim_strata$VZrd <- with(optim_strata, ((1/(xx6)^2)*(xx5)))
+
+#standard calcs 
+
+optim_strata$se <- with(optim_strata, sqrt(VZrd))
+
+optim_strata$o_st_ra <- strata_detail$o_st_ra
+
+optim_strata$r.Zrd <- with(optim_strata, (o_st_ra)*(Zrd))
 
 
+# averages with sqare values - make eq_8.9n & eq_8.9n (s_n2; s_d2) as sums of squares
+  
+  strata_data$pred_C2 <- with(strata_data, (pred_C)^2)
+
+s_n2 <- NULL
+
+for(j in 1:length(levels(strata_data$o_st))){
+  x <- strata_data[strata_data$o_st==levels(strata_data$o_st)[j],c("p_st","pred_C2","o_st")]
+  s_n2[[levels(strata_data$o_st)[j]]] <- aggregate(x[,c("pred_C2")], by=list(x$p_st), FUN=sum)
+}
+
+s_n2 <- do.call(rbind, s_n2)
+s_n2$o_st <- sapply(strsplit(row.names(s_n2), "\\."), function(x){x[1]})
+
+Zrd$sub_s_n2 <- s_n2$x
+
+Zrd$eq_8.9n2 <- with(Zrd, (sub_s_n2)*((p_st_ra)/(p_count)))
+
+s_n2 <- NULL
+
+            # Zrd$s_d2 <- Zrd$eq_8.9d.x   therefore use corresponding in optim_strata
+  
+eq_8.9n2 <-NULL
+for(j in 1:length(levels(Zrd$o_st))){
+  x <- Zrd[Zrd$o_st==levels(Zrd$o_st)[j],c("o_st", "eq_8.9n2")]
+  eq_8.9n2[[levels(Zrd$o_st)[j]]] <- aggregate(x[,c("eq_8.9n2")], by=list(x$o_st), FUN=sum)
+  
+}
+
+eq_8.9n2 <- do.call(rbind, eq_8.9n2)
+
+optim_strata$eq_8.9n2 <- eq_8.9n2$x
+
+eq_8.9n2 <-NULL
+
+optim_strata$Zrd2 <- with(optim_strata, (eq_8.9n2)/(eq_8.9d))
+optim_strata$sp_var <- with(optim_strata, (Zrd2)-((Zrd)^2)+(VZrd))
+optim_strata$samp_var <- optim_strata$sp_var / strata_detail$p_o_intsect  
+optim_strata$o_st_ra <- cbind(strata_detail$o_st_ra)
+
+optim_strata$samp_var.r <- with(optim_strata, ((samp_var) * (o_st_ra)^2))
+
+#for the stratif_perform
+
+stratif_perform <- NULL
+
+stratif_perform$o_Zrd <- sum(optim_strata$r.Zrd)
+stratif_perform$o_samp_var <- sum(optim_strata$samp_var.r)
+stratif_perform <- do.call(cbind, stratif_perform) #p_st samp var if sample were random
+
+###LOOK! he he he 
+
+x<-data.frame(o_Zrd=sum(optim_strata$r.Zrd),o_samp_var=sum(optim_strata$samp_var.r))
+
+stratif_perform <- as.data.frame(stratif_perform)
+
+###
+stratif_perform$design_eff <- p_samp_var_SI/(stratif_perform$o_samp_var)
+
+
+
+########################################################################################
+
+#...................to here................
 
 
 

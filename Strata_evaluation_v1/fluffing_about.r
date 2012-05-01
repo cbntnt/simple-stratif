@@ -28,7 +28,7 @@
       
       
             
-
+      Zrd$eq_8.9nnnnn <- with(Zrd, (p_ah_nh)*(sum_c))
       
      
       
