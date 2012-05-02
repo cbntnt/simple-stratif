@@ -2,7 +2,10 @@
 # Last update : April 2012
 # Note : testing different stratification calculus;
 
-setwd ("D:/simple-stratif/Strata_evaluation_v1")
+     #works#
+
+
+#setwd ("D:/simple-stratif/Strata_evaluation_v1")
 # setwd ("F:/R/Strata_evaluation")
 strata_data <- read.csv("Input_data_structure.csv")
 strata_detail <- read.csv("control_file.csv")
@@ -12,7 +15,7 @@ strata_detail <- read.csv("control_file.csv")
 
 #single inputs
 cell_res <- 30 #resolution of grid cells in meters
-p_samp_var_SI <- 0.16 #sampling variance from prior stratification 'if' the sample were random 
+p_samp_var_SI <- 0.16 #sampling variance from prior stratification as if the sample were random 
 n <- 48  #actual sample size
 
 # multiplication by strata: 
