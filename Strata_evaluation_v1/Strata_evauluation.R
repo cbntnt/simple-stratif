@@ -278,7 +278,7 @@ stratif_perform <- NULL
 
 x<-data.frame(o_Zrd=sum(optim_strata$r.Zrd),o_samp_var=sum(optim_strata$samp_var.r))
 
-stratif_perform <- as.data.frame(stratif_perform)
+stratif_perform <- (x)
 stratif_perform$design_eff <- p_samp_var_SI/(stratif_perform$o_samp_var)
 stratif_perform$n_eq <- stratif_perform$design_eff * n
 stratif_perform$eff_pct <- with(stratif_perform, (n_eq)/(n/100))
