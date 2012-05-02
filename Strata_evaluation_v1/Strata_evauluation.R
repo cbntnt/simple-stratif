@@ -2,7 +2,7 @@
 # Last update : April 2012
 # Note : testing different stratification calculus;
 
-
+setwd ("D:/simple-stratif/Strata_evaluation_v1")
 # setwd ("F:/R/Strata_evaluation")
 strata_data <- read.csv("Input_data_structure.csv")
 strata_detail <- read.csv("control_file.csv")
@@ -13,6 +13,7 @@ strata_detail <- read.csv("control_file.csv")
 #single inputs
 cell_res <- 30 #resolution of grid cells in meters
 p_samp_var_SI <- 0.16 #sampling variance from prior stratification 'if' the sample were random 
+n <- 48  #actual sample size
 
 # multiplication by strata: 
 strata_detail$p_st_a <- with(strata_detail, (p_cell_n) * (cell_res^2))
@@ -272,27 +273,12 @@ optim_strata$samp_var.r <- with(optim_strata, ((samp_var) * (o_st_ra)^2))
 
 stratif_perform <- NULL
 
-stratif_perform$o_Zrd <- sum(optim_strata$r.Zrd)
-stratif_perform$o_samp_var <- sum(optim_strata$samp_var.r)
-stratif_perform <- do.call(cbind, stratif_perform) #p_st samp var if sample were random
-
-###LOOK! he he he 
-
 x<-data.frame(o_Zrd=sum(optim_strata$r.Zrd),o_samp_var=sum(optim_strata$samp_var.r))
 
 stratif_perform <- as.data.frame(stratif_perform)
-
-###
 stratif_perform$design_eff <- p_samp_var_SI/(stratif_perform$o_samp_var)
-
-
-
-########################################################################################
-
-#...................to here................
-
-
-
+stratif_perform$n_eq <- stratif_perform$design_eff * n
+stratif_perform$eff_pct <- with(stratif_perform, (n_eq)/(n/100))
 
 
 # end of script;
