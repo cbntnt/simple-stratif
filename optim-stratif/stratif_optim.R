@@ -1,7 +1,7 @@
 
 
 
-PRED_OC <- read.csv("C:/PhD Stuff/2012_PhD/R_scripts/optim-stratif/PRED_OC.csv")
+PRED_OC <- read.csv("C:/PhD Stuff/2012_PhD/R_scripts/simple-stratif/optim-stratif/PRED_OC.csv")
 
 #data in ascending order 
 
