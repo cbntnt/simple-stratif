@@ -1,0 +1,3 @@
+importFrom("stratification", strata.LH)
+importFrom("sp", SpatialPolygons, SpatialPoints, overlay)
+exportPattern("^[^\\.]")
