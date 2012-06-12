@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Evaluates multiple possible stratified designs</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for eval.LH {soilcarbon}"><tr><td>eval.LH {soilcarbon}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Evaluates multiple possible stratified designs</h2>
+
+<h3>Description</h3>
+
+<p>Tests multiple possible stratified designs and selects the one with the lowest total variance. Looks at different combinations of strata number, breaks and sample allocations.</p>
+
+
+<h3>Usage</h3>
+
+<pre>eval.LH(obj, tvar = names(obj)[1], n, Ls = floor(n/2), pprob = 1)</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>object of type <code>"SpatialGridDataFrame"</code></p>
+</td></tr>
+<tr valign="top"><td><code>tvar</code></td>
+<td>
+<p>character; target variable name</p>
+</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p>integer; number of samples</p>
+</td></tr>
+<tr valign="top"><td><code>Ls</code></td>
+<td>
+<p>integer; maximum number of strata</p>
+</td></tr>
+<tr valign="top"><td><code>pprob</code></td>
+<td>
+<p>numeric in the range 0-1; prior probability can be set also manually</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>Object of type <code>"SpatialStratifiedSample"</code>.</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Ichsani Wheeler</p>
+
+
+<h3>See Also</h3>
+
+
+<p><code>stratification::strata.LH</code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Load the data:
+data(springf)
+gridded(springf) &lt;- ~x+y
+proj4string(springf) &lt;- CRS("+init=epsg:28355")
+smp &lt;- eval.LH(springf, n=48, det.lim=.3, Ls=4)
+plot(smp)
+library(plotKML)
+# create a new object for plotting in Google Earth:
+sp.domain &lt;- as.SpatialPolygons.SpatialPixels(smp@strata["strata"])
+sp.domain &lt;- SpatialPolygonsDataFrame(sp.domain, data.frame(ID=smp@strata$strata), match.ID = FALSE)
+smp.ssp &lt;- new("SpatialSamplingPattern", method = "Generalized Lavallee-Hidiroglou Method", 
+    pattern = smp@locations, sp.domain = sp.domain)
+# the same plot now in Google Earth:
+shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
+plotKML(smp.ssp, shape = shape)
+</pre>
+
+<hr><div align="center">[Package <em>soilcarbon</em> version 0.1-0 <a href="00Index.html">Index</a>]</div>
+</body></html>

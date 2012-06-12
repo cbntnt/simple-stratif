@@ -20,7 +20,7 @@
 data(springf)
 gridded(springf) <- ~x+y
 proj4string(springf) <- CRS("+init=epsg:28355")
-smp <- eval.LH(springf, n=48, det.lim=.3)
+smp <- eval.LH(springf, n=48, det.lim=.3, Ls=4)
 plot(smp)
 library(plotKML)
 # create a new object for plotting in Google Earth:
@@ -30,7 +30,7 @@ smp.ssp <- new("SpatialSamplingPattern", method = "Generalized Lavallee-Hidirogl
     pattern = smp@locations, sp.domain = sp.domain)
 # the same plot now in Google Earth:
 shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
-plotKML(smp.ssp, filename="springf_LH.kml", shape = shape)
+plotKML(smp.ssp, shape = shape)
 }
 \keyword{color}
 
