@@ -39,6 +39,11 @@ gridded(xsp) <- ~x+y
 spplot(xsp["strata_name"])
 xsp$strata_name_i <- as.integer(xsp$strata_name)
 writeGDAL(xsp["strata_name_i"], "strata_name.sdat", "SAGA", mvFlag=-99999)
+springf <- xsp["oc_kgm3"]
+names(springf) <- "SOC"
+proj4string(springf) <- CRS("+init=epsg:28355")
+springf <- data.frame(springf)
+save(springf, file="springf.rda", compress="xz")
 
 #---------------------------------- 
 # STEP 2: aggregate values and allocate points

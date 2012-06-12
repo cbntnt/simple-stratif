@@ -22,6 +22,15 @@ gridded(springf) <- ~x+y
 proj4string(springf) <- CRS("+init=epsg:28355")
 smp <- eval.LH(springf, n=48, det.lim=.3)
 plot(smp)
+library(plotKML)
+# create a new object for plotting in Google Earth:
+sp.domain <- as.SpatialPolygons.SpatialPixels(smp@strata["strata"])
+sp.domain <- SpatialPolygonsDataFrame(sp.domain, data.frame(ID=smp@strata$strata), match.ID = FALSE)
+smp.ssp <- new("SpatialSamplingPattern", method = "Generalized Lavallee-Hidiroglou Method", 
+    pattern = smp@locations, sp.domain = sp.domain)
+# the same plot now in Google Earth:
+shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
+plotKML(smp.ssp, filename="springf_LH.kml", shape = shape)
 }
 \keyword{color}
 
