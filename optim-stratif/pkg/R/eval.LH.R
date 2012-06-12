@@ -79,11 +79,11 @@ setMethod("plot", signature(x = "SpatialStratifiedSample", y = "missing"), funct
   require(raster)
   Ls = length(levels(x@strata@data[,1]))
   pal = rainbow(Ls)[rank(runif(Ls))]
-  par(mfrow=c(1,2))
+  par(mfrow=c(1,2), mar=c(3.5,3.5,.5,.5), oma=c(0,0,0,0))
   # TO DO: specify aspect of the new window
-  plot(raster(x@strata[1]), col=pal)
+  image(raster(x@strata[1]), col=pal, axes = FALSE, xlab="", ylab="")
   points(x@locations, pch="+", col="black", cex=1.2)
-  plot(x@eval$Ls, x@eval$smpvar, type="l", ylab="variance", xlab="Ls")
+  plot(x@eval$Ls, x@eval$smpvar, type="l", ylab="", xlab="")
 })
 
 

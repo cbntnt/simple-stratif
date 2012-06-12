@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Springfield</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for springf {soilcarbon}"><tr><td>springf {soilcarbon}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Springfield</h2>
+
+<h3>Description</h3>
+
+<p>A gridded map showing predicted soil organic carbon stock for a study area in NSW, Australia.</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(springf)</pre>
+
+
+<h3>Format</h3>
+
+
+<p>Data frame; contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOC</code></dt><dd><p>numeric; soil organic carbon in kilograms per cubic meter</p>
+</dd>
+<dt><code>x</code></dt><dd><p>numeric; x-coordinate in GDA94 / MGA zone 55</p>
+</dd>
+<dt><code>y</code></dt><dd><p>numeric; y-coordinate in GDA94 / MGA zone 55</p>
+</dd>
+</dl>
+
+
+
+<h3>Note</h3>
+
+<p> Predictions of organic carbon were produced using a regression modeling only.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Ichsani Wheeler</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Load the data:
+data(springf)
+gridded(springf) &lt;- ~x+y
+proj4string(springf) &lt;- CRS("+init=epsg:28355")
+library(plotKML)
+data(R_pal)
+spplot(springf, col.regions=R_pal[["soc_pal"]])
+</pre>
+
+<hr><div align="center">[Package <em>soilcarbon</em> version 0.1-0 <a href="00Index.html">Index</a>]</div>
+</body></html>
