@@ -21,6 +21,7 @@ data(springf)
 gridded(springf) <- ~x+y
 proj4string(springf) <- CRS("+init=epsg:28355")
 smp <- eval.LH(springf, n=48, det.lim=.3, Ls=4)
+str(smp@LH)
 plot(smp)
 library(plotKML)
 # create a new object for plotting in Google Earth:
