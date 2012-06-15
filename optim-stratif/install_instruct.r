@@ -10,12 +10,16 @@ install.packages(c("utils", "stratification", "sp", "raster", "maptools"))
 ## Preferred option - install from source code directly and make html files:
 system("Rcmd INSTALL --html D:/simple-stratif/optim-stratif/pkg")
 
+## Prepare a compiled package for sharing:
+system("Rcmd build D:/simple-stratif/optim-stratif/pkg")
+library(soilcarbon)
+
+#Instructions for others - save attachment to working directory, load R session in directory, run following command.... 
+ 
+
 ## Install package from a zipped source code:
 system("Rcmd INSTALL soilcarbon_0.1-0.tar.gz")
 library(soilcarbon)
 
-## Prepare a compiled package for sharing:
-system("Rcmd build D:/simple-stratif/optim-stratif/pkg")
-library(soilcarbon)
 
 # end of script;
