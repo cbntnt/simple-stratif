@@ -7,11 +7,13 @@
 
 
 # evaluate different designs:
-eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, pprob = 1){
+eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, smpvar.t, pprob = 1){
     
     require(maptools)
+    library(mgcv)
     require(spatstat)
-
+    require(stratification)
+    
     # range of the target variable:
     hmin <- min(obj@data[,tvar], na.rm=TRUE)
     hmax <- max(obj@data[,tvar], na.rm=TRUE)
@@ -19,10 +21,14 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, pprob = 1){
     if(missing(Ls)){ 
       if((hmax-hmin)/det.lim < floor(n/2)){
         Ls <- (hmax-hmin)/det.lim  
-      }
-      else {
+      } else {
         Ls = nclass.Sturges(obj@data[,tvar])  # floor(n/2)
       }
+    }
+
+    is.wholenumber <- function(x, tol = .Machine$double.eps^0.5){  abs(x - round(x)) < tol }
+    if(Ls < 2|!is.wholenumber(Ls)){
+         stop("Maximum number of strata must be >= 2")
     }
     
     # derive initial boundary positions:
@@ -35,17 +41,29 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, pprob = 1){
     for(j in 2:Ls){
       initbh <- hmin + (1:(j-1)) * (hmax - hmin) / Ls
       output <- strata.LH(x=obj@data[,tvar], initbh = initbh, n = n, CV = NULL, Ls = j, certain = NULL, alloc = list(q1 = 0.5, q2 = 0, q3 = 0.5), takenone = 0, bias.penalty = 1, takeall = 0, rh = rep(1, Ls = j), model = c("none"), model.control = list(), algo = c("Kozak"), algo.control = list())
-      mout[[j-1]] <- data.frame(Ah = output$Nh/sum(output$Nh), nh = output$nh, bh = c(hmin, output$bh), varh = output$varh)
-      smpvar[[j-1]] <- output$RMSE^2  # sum(mout$Ah^2*mout$varh/output$nh)
-    
+     
+      mout[[j-1]] <- data.frame(Ah = output$Nh/sum(output$Nh), nh = output$nh, bh = c(hmin, output$bh), varh = output$varh, sdh = (output$Nh/sum(output$Nh))^2 *(output$varh))
+
     # update progress bar
     setTxtProgressBar(pb, j)
     }
     close(pb)
     
-    # the best design:
-    smpvarm = min(unlist(smpvar), na.rm=TRUE)
-    strata.LH <- mout[[which(unlist(smpvar) == smpvarm)]]
+    #### derive the optimal threshold / number of strata:
+    #if(missing(smpvar.t)){
+      #sm <- sapply(mout, function(x){mean(x$sdh)})
+      #smpvar.t <- smpvar[which(max(sm*smpvar))]
+    #}
+    smpvar <- sapply(mout, function(x){sum(x$sdh)}) 
+        
+    # The best design:    CHANGE!!!!!!!!!!............
+    mout.m <- which(smpvar < smpvar.t)
+    strata.LH <- mout[[mout.m[1]]]
+    
+    
+    
+    
+    
     
     # Step 2: cluster using the optimized classes
     obj$strata <- cut(x=obj@data[,tvar], breaks=c(strata.LH$bh, hmax), labels = paste("L",1:nrow(strata.LH),sep=""), include.lowest = TRUE)
