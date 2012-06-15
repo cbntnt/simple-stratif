@@ -1,7 +1,7 @@
 \name{eval.LH}
 \alias{eval.LH}
 \title{Evaluates multiple possible stratified designs}
-\description{Tests multiple possible stratified designs and selects the one with the lowest total variance. Looks at different combinations of strata number, breaks and sample allocations.}
+\description{Tests multiple possible stratified designs and selects the optimal design for given sample number based on several criteria (INSERT DETAIL test!!) - nominally the design with the lowest total variance. Looks at different combinations of strata number, breaks and sample allocations per n}
 \usage{eval.LH(obj, tvar = names(obj)[1], n, Ls = floor(n/2), pprob = 1)}
 \arguments{
   \item{obj}{object of type \code{"SpatialGridDataFrame"}}

@@ -1,7 +1,7 @@
 Package: soilcarbon
 Type: Package
 Title: Soil carbon calculations
-Version: 0.1-0
+Version: 0.2-0
 Date: 2012-06-01
 Author: Ichsani Wheeler <ichsani.wheeler@gmail.com>
 Maintainer: Ichsani Wheeler <ichsani.wheeler@gmail.com>
@@ -10,4 +10,4 @@ License: GPL
 URL: http://sydney.edu.au/agriculture/
 LazyLoad: yes
 Depends: R (>= 2.12.0), utils, stratification, sp, raster, maptools
-Suggests: aqp 
+Suggests: aqp
