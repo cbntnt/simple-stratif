@@ -2,15 +2,13 @@
 # Maintainer     : Ichsani Wheeler <ichsani.wheeler@gmail.com>
 # Contributions  : Jaap de Gruijter; 
 # Status         : Pre-alpha
-# Note           : Sampling optimisation can be time-consuming;
-
-
+# Note           : Sampling optimisation can be time-consuming; 
+ 
 
 # evaluate different designs:
 eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, smpvar.t, pprob = 1){
     
     require(maptools)
-    library(mgcv)
     require(spatstat)
     require(stratification)
     
@@ -20,10 +18,11 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, smpvar.t, pprob =
     
     if(missing(Ls)){ 
       if((hmax-hmin)/det.lim < floor(n/2)){
-        Ls <- (hmax-hmin)/det.lim  
+        Ls <- round((hmax-hmin)/det.lim, 0)
       } else {
-        Ls = nclass.Sturges(obj@data[,tvar])  # floor(n/2)
-      }
+        Ls = nclass.Sturges(obj@data[,tvar])  
+        if(Ls > floor(n/2)){Ls <- floor(n/2)}
+      }         
     }
 
     is.wholenumber <- function(x, tol = .Machine$double.eps^0.5){  abs(x - round(x)) < tol }
@@ -36,35 +35,40 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, smpvar.t, pprob =
 
     # Step 1: derive optimal allocation and boundaries
     mout <- list(NULL)
-    smpvar <- list(NULL)
+    RMSE.out <- list(NULL)
     pb <- txtProgressBar(min=0, max=Ls-2, style=3)
     for(j in 2:Ls){
       initbh <- hmin + (1:(j-1)) * (hmax - hmin) / Ls
       output <- strata.LH(x=obj@data[,tvar], initbh = initbh, n = n, CV = NULL, Ls = j, certain = NULL, alloc = list(q1 = 0.5, q2 = 0, q3 = 0.5), takenone = 0, bias.penalty = 1, takeall = 0, rh = rep(1, Ls = j), model = c("none"), model.control = list(), algo = c("Kozak"), algo.control = list())
      
-      mout[[j-1]] <- data.frame(Ah = output$Nh/sum(output$Nh), nh = output$nh, bh = c(hmin, output$bh), varh = output$varh, sdh = (output$Nh/sum(output$Nh))^2 *(output$varh))
+      mout[[j-1]] <- data.frame(Ah = output$Nh/sum(output$Nh), nh = output$nh, bh = c(hmin, output$bh), varh = output$varh)
+      RMSE.out[[j-1]] <- output$RMSE
+      # sdh = (output$Nh/sum(output$Nh))^2 *(output$varh)               
+      # IW: Must check 'varh' -> looks to be only estimated population variance within strata;
 
     # update progress bar
     setTxtProgressBar(pb, j)
     }
     close(pb)
     
-    #### derive the optimal threshold / number of strata:
-    #if(missing(smpvar.t)){
-      #sm <- sapply(mout, function(x){mean(x$sdh)})
-      #smpvar.t <- smpvar[which(max(sm*smpvar))]
-    #}
-    smpvar <- sapply(mout, function(x){sum(x$sdh)}) 
+    ## derive total variance per design ?
+    # smpvar <- sapply(mout, function(x){sum(x$sdh)}) 
+    smpvar <- unlist(RMSE.out)
+    # RMSE = the root mean squared error (or standard error of the anticipated global mean)
         
-    # The best design:    CHANGE!!!!!!!!!!............
-    mout.m <- which(smpvar < smpvar.t)
+    # The best design:    
+    if(missing(smpvar.t)) {
+        mout.m <- which(smpvar==min(smpvar))
+    }
+    else{ 
+      mout.m <- which(smpvar < smpvar.t)[1] 
+      if(is.na(mout.m)){
+      stop("None of designs is below threshold value for the total variance across the stratified design")
+      }
+    }
+    
     strata.LH <- mout[[mout.m[1]]]
-    
-    
-    
-    
-    
-    
+
     # Step 2: cluster using the optimized classes
     obj$strata <- cut(x=obj@data[,tvar], breaks=c(strata.LH$bh, hmax), labels = paste("L",1:nrow(strata.LH),sep=""), include.lowest = TRUE)
     # add sampling probs:
