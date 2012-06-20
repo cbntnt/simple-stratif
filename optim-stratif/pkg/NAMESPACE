@@ -1,3 +1,5 @@
+importFrom("spatstat", rpoint)
 importFrom("stratification", strata.LH)
-importFrom("sp", SpatialPolygons, SpatialPoints, overlay)
+importFrom("sp", SpatialPolygons, SpatialPoints, overlay, spsample)
+exportClasses(SpatialStratifiedSample)
 exportPattern("^[^\\.]")
