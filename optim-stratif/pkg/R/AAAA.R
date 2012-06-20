@@ -23,10 +23,9 @@ setClass("SpatialStratifiedSample", representation(variable = "character", locat
 
 ################## generic functions ##############
 
-# if(!isGeneric("getID")){
-#  setGeneric("getID", function(obj, ...){standardGeneric("getID")})
-# }
-
+#if(!isGeneric("eval.LH")){
+#  setGeneric("eval.LH", function(obj, ...){standardGeneric("eval.LH")})
+#}
 
 
 # end of script;

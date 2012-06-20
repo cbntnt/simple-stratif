@@ -2,14 +2,17 @@
 \alias{eval.LH}
 \title{Evaluates multiple possible stratified designs}
 \description{Tests multiple possible stratified designs and selects the optimal design for given sample number based on several criteria (INSERT DETAIL test!!) - nominally the design with the lowest total variance. Looks at different combinations of strata number, breaks and sample allocations per n}
-\usage{eval.LH(obj, tvar = names(obj)[1], n, Ls = floor(n/2), smpvar.t, pprob = 1)}
+\usage{eval.LH(obj, tvar = names(obj)[1], n, det.lim, Ls = floor(n/2), Ls.min = 2, smpvar.t, pprob = 1, silent = FALSE)}
 \arguments{
   \item{obj}{object of type \code{"SpatialGridDataFrame"}}
   \item{tvar}{character; target variable name}
   \item{n}{integer; number of samples}
+  \item{det.lim}{numeric; detection limit for the target variable}
   \item{Ls}{integer; maximum number of strata}
+  \item{Ls.min}{integer; minimum number of strata}
   \item{smpvar.t}{numeric; threshold value for the total variance across the stratified design}
   \item{pprob}{numeric in the range 0-1; prior probability can be set also manually}
+  \item{silent}{logical; indicates whether to print the progress bar}
 }
 \value{Object of type \code{"SpatialStratifiedSample"}.}
 \note{If not specified otherwise, functions tries to estimate the threshold value for the total within-stratum sampling variance. }

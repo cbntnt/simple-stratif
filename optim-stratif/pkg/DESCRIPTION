@@ -1,8 +1,8 @@
 Package: soilcarbon
 Type: Package
 Title: Soil carbon calculations
-Version: 0.2-0
-Date: 2012-06-01
+Version: 0.2-1
+Date: 2012-06-21
 Author: Ichsani Wheeler <ichsani.wheeler@gmail.com>
 Maintainer: Ichsani Wheeler <ichsani.wheeler@gmail.com>
 Description: Functions for calculating with soil organic carbon.
