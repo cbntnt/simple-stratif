@@ -14,16 +14,21 @@ library(soilcarbon)
 
 ## 2. Prepare a compiled package for sharing (.tar.gz):
 system("Rcmd build D:/simple-stratif/optim-stratif/pkg")
-                                    #commit zip file
+# commit zip file
 
 ## Installing package from tar.gz file containing the source code - any install: 
 # Download the package:
-download.file("http://code.google.com/p/simple-stratif/source/browse/optim-stratif/soilcarbon_0.1-0.tar.gz", "soilcarbon_0.1-0.tar.gz")
+download.file("http://code.google.com/p/simple-stratif/source/browse/optim-stratif/soilcarbon_0.2-1.tar.gz", "soilcarbon_0.2-1.tar.gz")
 # Install package from a zipped source code:
 install.packages(c("utils", "stratification", "sp", "raster", "maptools"))
-system("Rcmd INSTALL soilcarbon_0.1-0.tar.gz")
+system("Rcmd INSTALL soilcarbon_0.2-1.tar.gz")
 library(soilcarbon)
 
 ## * the package versions and absolute paths need to be adjusted manually of course
+
+# Load some data sets not available without the package:
+download.file("http://simple-stratif.googlecode.com/svn/optim-stratif/pkg/data/springf.rda", "springf.rda")
+load("springf.rda")
+
 
 # end of script;

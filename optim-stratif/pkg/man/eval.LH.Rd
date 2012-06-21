@@ -1,7 +1,7 @@
 \name{eval.LH}
 \alias{eval.LH}
-\title{Evaluates multiple possible stratified designs}
-\description{Tests multiple possible stratified designs and selects the optimal design for given sample number based on several criteria (INSERT DETAIL test!!) - nominally the design with the lowest total variance. Looks at different combinations of strata number, breaks and sample allocations per n}
+\title{Evaluates multiple possible \code{strata.LH} designs}
+\description{Tests multiple possible stratified designs based on the \code{stratification::strata.LH} function and selects the optimal design for a given sample number and a varying number of strata. The functions iteratively looks at different combinations of strata number, breaks and sample allocations, and then selects, by default, the design with the lowest total variance.}
 \usage{eval.LH(obj, tvar = names(obj)[1], n, det.lim, Ls = floor(n/2), Ls.min = 2, smpvar.t, pprob = 1, silent = FALSE)}
 \arguments{
   \item{obj}{object of type \code{"SpatialGridDataFrame"}}
@@ -23,8 +23,6 @@
 \examples{
 # Load the data:
 data(springf)
-# download.file("http://simple-stratif.googlecode.com/svn/optim-stratif/pkg/data/springf.rda", "springf.rda")
-# load("springf.rda")
 gridded(springf) <- ~x+y
 # Target variable -> SOC:
 var(springf$SOC, na.rm=TRUE)
@@ -62,5 +60,5 @@ smp.ssp <- new("SpatialSamplingPattern", method = "Generalized Lavallee-Hidirogl
 shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
 plotKML(smp.ssp, shape = shape)
 }}
-\keyword{color}
+\keyword{evaluate}
 

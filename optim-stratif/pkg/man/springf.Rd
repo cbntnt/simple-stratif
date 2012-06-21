@@ -20,8 +20,9 @@ Data frame; contains the following columns:
 data(springf)
 gridded(springf) <- ~x+y
 proj4string(springf) <- CRS("+init=epsg:28355")
+\dontrun{# visualize the map:
 library(plotKML)
 data(R_pal)
 spplot(springf, col.regions=R_pal[["soc_pal"]])
-}
+}}
 \keyword{datasets}

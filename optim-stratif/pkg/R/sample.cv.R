@@ -27,10 +27,14 @@ sample.cv <- function(x, obj, variable = x@title, pprob = 1, N = 2:25, S = 50, t
     # Prior probability image:
     if(length(pprob)==1){ 
       pprob = rep(pprob, length(obj)) 
+      message(paste("Running simulations with method ", type, " and constant prior probability...", sep=""))
     }
-    else{ if(!length(pprob)==length(obj)){
-      stop("'pprob' object is not of same size as the 'obj' object")
-    }}
+    else{ 
+      if(!length(pprob)==length(obj)){
+        stop("'pprob' object is not of same size as the 'obj' object")
+      }
+      message(paste("Running simulations with method ", type, " and varying prior probabilities...", sep=""))
+    }
     # copy values:
     obj$pprob <- pprob
     grd <- as.im.SpatialGridDataFrame(as(obj["pprob"], "SpatialGridDataFrame"))
@@ -64,6 +68,7 @@ sample.cv <- function(x, obj, variable = x@title, pprob = 1, N = 2:25, S = 50, t
           obj$strata <- cut(x=obj@data[,1], breaks=c(hmin, output$bh, hmax), labels = paste("L", 1:Ls, sep=""), include.lowest = TRUE)
           obj.sr <- lapply(levels(obj$strata), FUN=function(L){obj[obj$strata==L,"pprob"]})
           smp <- list(NULL)
+          # sample per strata:
           for(k in 1:length(levels(obj$strata))){
             grds <- as.im.SpatialGridDataFrame(as(obj.sr[[k]]["pprob"], "SpatialGridDataFrame"))
             smp[[k]] <- rpoint(n=output$nh[k], f=grds)
