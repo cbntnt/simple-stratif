@@ -1,8 +1,8 @@
 # Purpose        : Evaluation of sampling designs produced using  stratification
 # Maintainer     : Ichsani Wheeler <ichsani.wheeler@gmail.com>
 # Contributions  : Jaap de Gruijter; 
-# Status         : Pre-alpha
-# Note           : Sampling optimisation can be time-consuming; 
+# Status         : Pre-alpha                             
+# Note           : CHECK: version of stratification package - update to 2.1-1 ... has bug-fix for nh rounding. Double check RMSE as calc has changed.
  
 
 # evaluate different designs:
@@ -44,7 +44,7 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, smpva
  
     for(j in Ls.min:Ls){
       initbh <- hmin + (1:(j-1)) * (hmax - hmin) / Ls
-      output <- strata.LH(x=obj@data[,tvar], initbh = initbh, n = n, CV = NULL, Ls = j, certain = NULL, alloc = list(q1 = 0.5, q2 = 0, q3 = 0.5), takenone = 0, bias.penalty = 1, takeall = 0, rh = rep(1, Ls = j), model = c("none"), model.control = list(), algo = c("Kozak"), algo.control = list())
+      output <- strata.LH(x=obj@data[,tvar], initbh = initbh, n = n, CV = NULL, Ls = j, certain = NULL, alloc = list(q1 = 0.5, q2 = 0, q3 = 0.5), takenone = 0, bias.penalty = 1, takeall = 0, rh = rep(1, Ls = j), model = c("none"), model.control = list(), algo = c("Kozak"), algo.control = list(method="modified"))
      
       mout[[j-1]] <- data.frame(Ah = output$Nh/sum(output$Nh), nh = output$nh, bh = c(hmin, output$bh), varh = output$varh)
       RMSE.out[[j-1]] <- output$RMSE

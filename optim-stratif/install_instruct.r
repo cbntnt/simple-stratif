@@ -7,6 +7,10 @@
 
    
 ## INSTALLING PACKAGE FROM SOURCE CODE - NATIVE INSTALL or MAKE:
+
+# if issues with proxy use below prior to selecting mirror 
+setInternet2() 
+
 ## 1. Preferred option - install from source code directly and make html files:
 install.packages(c("utils", "stratification", "sp", "raster", "maptools"))
 system("Rcmd INSTALL --html D:/simple-stratif/optim-stratif/pkg")
