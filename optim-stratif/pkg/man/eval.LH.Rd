@@ -15,7 +15,7 @@
   \item{silent}{logical; indicates whether to print the progress bar}
 }
 \value{Object of type \code{"SpatialStratifiedSample"}.}
-\note{If not specified otherwise, functions tries to estimate the threshold value for the total within-stratum sampling variance. }
+\note{If not specified otherwise, functions tries to estimate the max Ls value from the dataset}
 \author{Ichsani Wheeler}
 \seealso{
 \code{stratification::strata.LH}
