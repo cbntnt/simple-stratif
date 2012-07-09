@@ -10,7 +10,7 @@ eval.Delta <- function(Delta = seq(0, 1.5, by=.2), N, sd1, sd2, S = 100, plot = 
 
   is.wholenumber <- function(x, tol = .Machine$double.eps^0.5){  abs(x - round(x)) < tol }
   if(!is.wholenumber(N)|!is.wholenumber(S)){
-    stop("'N' and 'S' must be an integer")
+    stop("'N' and 'S' must be integers")
   }
 
   dif <- rep(list(list(NULL)), length(Delta))

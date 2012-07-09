@@ -6,23 +6,16 @@
  
 
 # evaluate different designs:
-sample.cv <- function(x, obj, variable = x@title, pprob = 1, N = 2:25, S = 50, type=list("rpoint", "strata.LH")[[1]], Ls){
+setMethod("spsample.cv", signature(x = "RasterBrick", obj = "SpatialPixelsDataFrame"), function(x, obj, variable = x@title, pprob = 1, N = 2:25, S = 50, type=list("rpoint", "strata.LH")[[1]], Ls){
     
     require(raster)
     require(spatstat)
     require(stratification)
     
-    # check input objects:
-    if(!class(x)=="RasterBrick"){
-      stop("Object of class 'RasterBrick' required for argument 'obj'")
+    # check the sampling strategy:
+    if(!type=="rpoint"|!type=="eval.LH"){
+      stop("This sampling algorithm has not been implemented yet")
     }
-    if(!class(obj)=="SpatialPixelsDataFrame"){
-      stop("Object of class 'SpatialPixelsDataFrame' required for argument 'obj'")
-    }
-    # sampling strategy:
-    # if(!type=="rpoint"|!type=="eval.LH"){
-    #  stop("This sampling algorithm has not been implemented yet")
-    # }
 
     # Prior probability image:
     if(length(pprob)==1){ 
@@ -31,7 +24,7 @@ sample.cv <- function(x, obj, variable = x@title, pprob = 1, N = 2:25, S = 50, t
     }
     else{ 
       if(!length(pprob)==length(obj)){
-        stop("'pprob' object is not of same size as the 'obj' object")
+        stop("'pprob' object is not of same size as the 'obj'")
       }
       message(paste("Running simulations with method ", type, " and varying prior probabilities...", sep=""))
     }
@@ -113,7 +106,7 @@ sample.cv <- function(x, obj, variable = x@title, pprob = 1, N = 2:25, S = 50, t
     # put everything into a big list:
     out <- list(variable=variable, stats=stats, samples=xy, cv=mat)    
     return(out)
-}    
+})    
 
 
 # end of script;

@@ -4,7 +4,7 @@
 \description{Tests multiple possible stratified designs based on the \code{stratification::strata.LH} function and selects the optimal design for a given sample number and a varying number of strata. The functions iteratively looks at different combinations of strata number, breaks and sample allocations, and then selects, by default, the design with the lowest total variance.}
 \usage{eval.LH(obj, tvar = names(obj)[1], n, det.lim, Ls = floor(n/2), Ls.min = 2, smpvar.t, pprob = 1, silent = FALSE)}
 \arguments{
-  \item{obj}{object of type \code{"SpatialGridDataFrame"}}
+  \item{obj}{object of type \code{"SpatialPixelsDataFrame"}}
   \item{tvar}{character; target variable name}
   \item{n}{integer; number of samples}
   \item{det.lim}{numeric; detection limit for the target variable}
@@ -15,7 +15,7 @@
   \item{silent}{logical; indicates whether to print the progress bar}
 }
 \value{Object of type \code{"SpatialStratifiedSample"}.}
-\note{If not specified otherwise, functions tries to estimate the max Ls value from the dataset}
+\note{If not specified otherwise, functions tries to estimate the max Ls value from the dataset (\code{obj}).}
 \author{Ichsani Wheeler}
 \seealso{
 \code{stratification::strata.LH}

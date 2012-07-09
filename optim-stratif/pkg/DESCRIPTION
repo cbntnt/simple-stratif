@@ -1,13 +1,13 @@
 Package: soilcarbon
 Type: Package
 Title: Soil carbon calculations
-Version: 0.2-1
-Date: 2012-06-21
+Version: 0.2-2
+Date: 2012-07-12
 Author: Ichsani Wheeler <ichsani.wheeler@gmail.com>
 Maintainer: Ichsani Wheeler <ichsani.wheeler@gmail.com>
 Description: Functions for calculating with soil organic carbon.
 License: GPL
 URL: http://sydney.edu.au/agriculture/
 LazyLoad: yes
-Depends: R (>= 2.12.0), utils, stratification, sp, raster, maptools, mgcv, spatstat
-Suggests: aqp
+Depends: R (>= 2.12.0), utils, stratification, sp, raster, maptools, mgcv, spatstat, GSIF
+Suggests: aqp, plotKML
