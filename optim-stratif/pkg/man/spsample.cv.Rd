@@ -1,11 +1,12 @@
-\name{sample.cv}
-\alias{sample.cv}
+\name{spsample.cv}
+\docType{methods}
+\alias{spsample.cv}
 \title{Cross-validation for multiple realizations of sampling strategy}
 \description{Derives mean error for varying sampling intensity (N-list) and summary statistics for a number of realizations of the targeted sampling strategy (S-times).}
-\usage{sample.cv(x, obj, variable = x@title, pprob = 1, N = 2:25, S = 50, type=list("rpoint", "strata.LH")[[1]], ...)}
+\usage{spsample.cv(x, obj, variable = x@title, pprob = 1, N = 2:25, S = 50, type=list("rpoint", "strata.LH")[[1]], ...)}
 \arguments{
   \item{x}{object of type \code{"RasterBrick"} containing multiple equiprobable realizations}
-  \item{obj}{object of type \code{"SpatialGridDataFrame"} containing the target variable used for stratification}
+  \item{obj}{object of type \code{"SpatialPixelsDataFrame"} containing the target variable used for stratification}
   \item{variable}{character; variable title}
   \item{pprob}{numeric in the range 0-1; prior probability can be set also manually}
   \item{N}{integer; sampling intensity list}
@@ -21,7 +22,7 @@
  \item{cv}{data frame; results of cross validation, aggregated per all realizations ('x' object)}
 }
 }
-\note{This operation can be tim-consuming for large data sets. The \code{sample.cv} at the moment implements only two sampling strategies --- random sampling with varying probability (\code{"rpoint"}) and stratified sampling (\code{"strata.LH"}). The results of cross validation are highly dependent on how accurate are geostistical simulations and should be taken with care.}
+\note{The \code{spsample.cv} at the moment implements only two sampling strategies --- random sampling with varying probability (\code{"rpoint"}) and stratified sampling (\code{"strata.LH"}). The results of cross validation are highly dependent on how accurate are geostistical simulations and should be taken with care. This operation can be tim-consuming for large data sets.}
 \author{Ichsani Wheeler}
 \seealso{
 \code{\link{eval.LH}}, \code{stratification::strata.LH}
@@ -38,18 +39,18 @@ gridded(meuse.grid) <- ~x+y
 data(droadt)
 gridded(droadt) <- ~x+y
 \dontrun{# fit a gstat model:
-library(plotKML)
+library(GSIF)
 omm <- fit.gstatModel(observations = meuse, formulaString = om~dist, family = gaussian(log), covariates = meuse.grid)
 # produce 100 simulations:
 om.rk <- predict(omm, predictionLocations = meuse.grid, nsim = 100)
 meuse.grid$om.glm <- predict.glm(omm@regModel, meuse.grid, type = "response")
-SRS1.cv <- sample.cv(x=om.rk@realizations, obj=meuse.grid, N=seq(2,200, by=10))
+SRS1.cv <- spsample.cv(x=om.rk@realizations, obj=meuse.grid, N=seq(2,200, by=10))
 Ns = seq(2, 50, by=5)
-SRS.cv <- sample.cv(x=om.rk@realizations, obj=meuse.grid, N=Ns)
-PPS.cv <- sample.cv(x=om.rk@realizations, obj=meuse.grid, pprob=droadt$pprob, N=Ns)
-STR_3.cv <- sample.cv(x=om.rk@realizations, obj=meuse.grid["om.glm"], N=Ns, S=1, type="strata.LH", Ls=3)
-STR_4.cv <- sample.cv(x=om.rk@realizations, obj=meuse.grid["om.glm"], N=2:20, S=1, type="strata.LH", Ls=4)
-STR_5.cv <- sample.cv(x=om.rk@realizations, obj=meuse.grid["om.glm"], N=2:20, S=1, type="strata.LH", Ls=5)
+SRS.cv <- spsample.cv(x=om.rk@realizations, obj=meuse.grid, N=Ns)
+PPS.cv <- spsample.cv(x=om.rk@realizations, obj=meuse.grid, pprob=droadt$pprob, N=Ns)
+STR_3.cv <- spsample.cv(x=om.rk@realizations, obj=meuse.grid["om.glm"], N=Ns, S=1, type="strata.LH", Ls=3)
+STR_4.cv <- spsample.cv(x=om.rk@realizations, obj=meuse.grid["om.glm"], N=2:20, S=1, type="strata.LH", Ls=4)
+STR_5.cv <- spsample.cv(x=om.rk@realizations, obj=meuse.grid["om.glm"], N=2:20, S=1, type="strata.LH", Ls=5)
 # model the three designs and compare in one plot:
 SRS1_Md.m <- glm(Md~log1p(N)+log1p(N^2), SRS1.cv$cv, family = gaussian(link="log"))
 SRS_Md.m <- glm(Md~log1p(N)+log1p(N^2), SRS.cv$cv, family = gaussian(link="log"))
@@ -77,5 +78,4 @@ scatter.smooth(x=SRS.cv$cv$N, y=SRS.cv$cv$Dp, main="Simple Random Sampling", yli
 scatter.smooth(x=STR_3.cv$cv$N, y=STR_3.cv$cv$Dp, main="Stratified sampling (LH method)", ylim=c(0,.6), xlim=c(2,50), xlab="Sampling intensity (N)", ylab="", pch=21, bg="white", col="black", cex.main=1.2, font.main=4, cex=1.5)
 dev.off()
 }}
-\keyword{validation}
-
+\keyword{methods}
