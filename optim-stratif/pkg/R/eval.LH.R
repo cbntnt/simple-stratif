@@ -2,7 +2,7 @@
 # Maintainer     : Ichsani Wheeler <ichsani.wheeler@gmail.com>
 # Contributions  : Jaap de Gruijter; 
 # Status         : Pre-alpha                             
-# Note           : CHECK: version of stratification package - update to 2.1-1 ... has bug-fix for nh rounding. Double check RMSE as calc has changed.
+# Note           : 
  
 
 # evaluate different designs:
