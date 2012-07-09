@@ -9,6 +9,13 @@
 # outputs       : summary table stratification boundaries and allocation;
 # remarks 1     : ;
 
+
+#Random stuff
+#setInternet2()
+#setwd("C:/PhD Stuff/2012_PhD/R_scripts/simple-stratif/optim-stratif/Testing_outputs")
+
+
+
 #----------------------------------
 # STEP 1: Data prep - all farms & C prediction versions (C maps)
 #----------------------------------
