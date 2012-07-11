@@ -14,7 +14,7 @@ model.control = list(), algo = c("Kozak"),
 algo.control = list(method="modified")
 )
 
-outpt <- data.frame(strata = seq(along=x$Nh), Nh = x$Nh, Ah = x$Nh/sum(x$Nh), nh = x$nh, bh = c((min(PRED_OC$oc_kgm3)), x$bh), p_var = x$varh, smpvar = x$varh/x$nh, desvar = (x$Nh/(sum(x$Nh)))^2 * (x$varh/x$nh))
+outpt <- data.frame(strata = seq(along=x$Nh), Nh = x$Nh, Ah = x$Nh/sum(x$Nh), nh = x$nh, initbh = c((min(PRED_OC$oc_kgm3)), x$initbh), bh = c((min(PRED_OC$oc_kgm3)), x$bh), p_var = x$varh, smpvar = x$varh/x$nh, desvar = (x$Nh/(sum(x$Nh)))^2 * (x$varh/x$nh))
 
 write.table(outpt, "outpt.txt", row.names=FALSE, col.names=TRUE, sep = " ")  
 
