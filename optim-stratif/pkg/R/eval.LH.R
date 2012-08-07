@@ -21,11 +21,11 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, smpva
     hmax <- max(obj@data[,tvar], na.rm=TRUE)
     
     if(missing(Ls)){ 
-      if((hmax-hmin)/det.lim < floor(n/2)){
+      if((hmax-hmin)/det.lim < floor(n/3)){
         Ls <- round((hmax-hmin)/det.lim, 0)
       } else {
         Ls = nclass.Sturges(obj@data[,tvar])  
-        if(Ls > floor(n/2)){Ls <- floor(n/2)}
+        if(Ls > floor(n/3)){Ls <- floor(n/3)}
       }         
     }
 
@@ -37,20 +37,22 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, smpva
     # derive initial boundary positions:
     # the default initial boundaries are bh = min(X) + h * (max(X)-min(X))/Ls for  h=1 ,..., Ls-1
 
-    # Step 1: derive optimal allocation and boundaries
+    # Step 1: derive optimal allocation and boundaries with min alloc of 3 each strata
     mout <- list(NULL)
     RMSE.out <- list(NULL)
     pb <- txtProgressBar(min=0, max=Ls-Ls.min, style=3) 
  
     for(j in Ls.min:Ls){
       initbh <- hmin + (1:(j-1)) * (hmax - hmin) / Ls
-      output <- strata.LH(x=obj@data[,tvar], initbh = initbh, n = n, CV = NULL, Ls = j, certain = NULL, alloc = list(q1 = 0.5, q2 = 0, q3 = 0.5), takenone = 0, bias.penalty = 1, takeall = 0, rh = rep(1, Ls = j), model = c("none"), model.control = list(), algo = c("Kozak"), algo.control = list(method="modified"))
+      output <- strata.LH(x=obj@data[,tvar], initbh = initbh, n = n, CV = NULL, Ls = j, certain = NULL, alloc = list(q1 = 0.5, q2 = 0, q3 = 0.5), takenone = 0, bias.penalty = 1, takeall = 0, rh = rep(1, Ls = j), model = c("none"), model.control = list(), algo = c("Kozak"), algo.control = list(method="modified", minNh = 3))
      
-      mout[[j-1]] <- data.frame(Ah = output$Nh/sum(output$Nh), nh = output$nh, bh = c(hmin, output$bh), varh = output$varh)
+      mout[[j-1]] <- data.frame(strata = seq(along = output$nh), nh = output$nh, Nh = output$Nh, Ah = output$Nh/sum(output$Nh), initbh = c(hmin, output$initbh), bh = c(hmin, output$bh), p_var = output$varh, smpvar = output$varh/output$nh, desvar = (output$Nh/(sum(output$Nh)))^2 * (output$varh/output$nh))
+    
+       #check smpvar.t as per RMSE (StdDev) and/or sampling var... not consistently applied at smp1@eval$des_smpvar... trace value... 
+      
       RMSE.out[[j-1]] <- output$RMSE
-      # sdh = (output$Nh/sum(output$Nh))^2 *(output$varh)               
-      # IW: Must check 'varh' -> looks to be only estimated population variance within strata;
-
+      
+       
     # update progress bar
     if(silent==FALSE){
        setTxtProgressBar(pb, j)
@@ -59,21 +61,26 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, smpva
 
     close(pb)
     
-    # RMSE = the root mean squared error (or standard error of the anticipated global mean)
-    smpvar <- unlist(RMSE.out)
-        
+    # RMSE = the root mean squared error (or standard deviation of the anticipated global mean)
+    RMSE <- unlist(RMSE.out)
+
+#### fix in regards to smpvar.t, RMSE and desvar...         
     # The best design:    
     if(missing(smpvar.t)) {
-        mout.m <- which(smpvar==min(smpvar))
+        mout.m <- which(RMSE==min(RMSE))
     }
     else{ 
-      mout.m <- which(smpvar < smpvar.t)[1] 
+      mout.m <- which(sqrt(RMSE) < smpvar.t)[1] 
       if(is.na(mout.m)){
-      stop("None of designs is below threshold value for the total variance across the stratified design")
+      stop("None of designs is below threshold value for the total spatial variance across the stratified design")
       }
     }
     
     strata.LH <- mout[[mout.m[1]]]
+
+
+
+
 
     # Step 2: cluster using the optimized classes
     obj$strata <- cut(x=obj@data[,tvar], breaks=c(strata.LH$bh, hmax), labels = paste("L", 1:nrow(strata.LH), sep=""), include.lowest = TRUE)
@@ -95,7 +102,7 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, smpva
     smp <- do.call(rbind, smp)
     proj4string(smp) <- obj@proj4string
 
-    out <- new("SpatialStratifiedSample", variable = tvar, locations = smp, strata = obj[c("strata","pprob")], LH = strata.LH, eval = data.frame(Ls=Ls.min:Ls, smpvar=unlist(smpvar)))
+    out <- new("SpatialStratifiedSample", variable = tvar, locations = smp, strata = obj[c("strata","pprob")], LH = strata.LH, eval = data.frame(Ls=Ls.min:Ls, RMSE=unlist(RMSE), desvar = (unlist(RMSE))^2) )
     
     return(out)
 }    
