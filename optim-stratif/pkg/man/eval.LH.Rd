@@ -27,18 +27,35 @@ gridded(springf) <- ~x+y
 # Target variable -> SOC:
 var(springf$SOC, na.rm=TRUE)
 proj4string(springf) <- CRS("+init=epsg:28355")
+
+
+#1. Let method select design given n and matched with sampling variance of previous round (*note - need penalty (?) for underestimation of spatial variance*) 
+smp1 <- eval.LH(springf, n=48, det.lim = 0.3, smpvar.t = 0.015)
+
+  #check smpvar.t as per RMSE (StdDev) and/or sampling var... not consistently applied????  
+
+
+
+
+
+#With no prior info....
 # 1. Let the method select max Ls:
-smp1 <- eval.LH(springf, n=48, det.lim=.3)
+#smp1 <- eval.LH(springf, n=48, det.lim=.3)
 # 2. Set the threshold variance manually:
-smp2 <- eval.LH(springf, n=48, det.lim=.3, smpvar.t=.05)
-# 3. Set the Ls manually:
-smp3 <- eval.LH(springf, n=48, det.lim=.3, Ls=3)
-str(smp3@LH)
+#smp2 <- eval.LH(springf, n=48, det.lim=.3, smpvar.t=.05)
+## 3. Set the Ls manually:
+#smp3 <- eval.LH(springf, n=48, det.lim=.3, Ls=3)
+#str(smp3@LH)
+
+
 # plot sampling design and total variances;
-plot(smp3)
+plot(smp1)
+
+
 # Test eval.LH (smp2) using varying n
 n.l <- seq(10,110, by=20) 
 smp2.l <- lapply(n.l, FUN=function(x){eval.LH(springf, n=x, det.lim=.3)})  
+
 # evaluates stratification for 6 sampling intensities;  
 # Plot summary eval's:
 sumd <- lapply(smp2.l, slot, "eval")
@@ -49,6 +66,8 @@ for(j in 2:length(n.l)){
 }
 # add legend:
 legend("topright", inset=.05, title="Sampling intensity (N)", as.character(n.l), lty=1:length(n.l), cex=.7) 
+
+
 \dontrun{# plot the resulting design in GE:
 library(plotKML)
 # create a new object for plotting in Google Earth:
