@@ -6,7 +6,7 @@
  
 
 # evaluate different designs:
-eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, smpvar.t, pprob = 1, silent = FALSE){
+eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desvar.t, pprob = 1, silent = FALSE){
     
     require(maptools)
     require(spatstat)
@@ -47,9 +47,7 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, smpva
       output <- strata.LH(x=obj@data[,tvar], initbh = initbh, n = n, CV = NULL, Ls = j, certain = NULL, alloc = list(q1 = 0.5, q2 = 0, q3 = 0.5), takenone = 0, bias.penalty = 1, takeall = 0, rh = rep(1, Ls = j), model = c("none"), model.control = list(), algo = c("Kozak"), algo.control = list(method="modified", minNh = 3))
      
       mout[[j-1]] <- data.frame(strata = seq(along = output$nh), nh = output$nh, Nh = output$Nh, Ah = output$Nh/sum(output$Nh), initbh = c(hmin, output$initbh), bh = c(hmin, output$bh), p_var = output$varh, smpvar = output$varh/output$nh, desvar = (output$Nh/(sum(output$Nh)))^2 * (output$varh/output$nh))
-    
-       #check smpvar.t as per RMSE (StdDev) and/or sampling var... not consistently applied at smp1@eval$des_smpvar... trace value... 
-      
+         
       RMSE.out[[j-1]] <- output$RMSE
       
        
@@ -61,27 +59,23 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, smpva
 
     close(pb)
     
-    # RMSE = the root mean squared error (or standard deviation of the anticipated global mean)
+    # RMSE = the root mean squared error (or standard deviation of the anticipated global mean); desvar = the sampling variance for the given design
     RMSE <- unlist(RMSE.out)
-
-#### fix in regards to smpvar.t, RMSE and desvar...         
+    desvar <- RMSE^2
+    
     # The best design:    
-    if(missing(smpvar.t)) {
-        mout.m <- which(RMSE==min(RMSE))
+    if(missing(desvar.t)) {
+        mout.m <- which(desvar==min(desvar))
     }
     else{ 
-      mout.m <- which(sqrt(RMSE) < smpvar.t)[1] 
+      mout.m <- which(desvar < desvar.t)[1] 
       if(is.na(mout.m)){
-      stop("None of designs is below threshold value for the total spatial variance across the stratified design")
+      stop("No designs are below the specified threshold value for the (predicted) sampling variance")
       }
     }
     
     strata.LH <- mout[[mout.m[1]]]
-
-
-
-
-
+                                                             
     # Step 2: cluster using the optimized classes
     obj$strata <- cut(x=obj@data[,tvar], breaks=c(strata.LH$bh, hmax), labels = paste("L", 1:nrow(strata.LH), sep=""), include.lowest = TRUE)
     # add sampling probs:
