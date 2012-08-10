@@ -29,15 +29,12 @@ var(springf$SOC, na.rm=TRUE)
 proj4string(springf) <- CRS("+init=epsg:28355")
 
 
-#1. Let method select design given n and matched with sampling variance of previous round (*note - need penalty (?) for underestimation of spatial variance*) 
+#1. Let method select design given n and matched with sampling variance of previous round (*note - need penalty (?) for underestimation of spatial variance ... only in first round?*) 
 smp1 <- eval.LH(springf, n=48, det.lim = 0.3, desvar.t = 0.015)
 
   #check smpvar.t as per RMSE (StdDev) and/or sampling var... not consistently applied????  
 
-
-
-
-
+                                 
 #With no prior info....
 # 1. Let the method select max Ls:
 #smp1 <- eval.LH(springf, n=48, det.lim=.3)
@@ -53,14 +50,14 @@ plot(smp1)
 
 
 # Test eval.LH (smp2) using varying n
-n.l <- seq(10,110, by=20) 
+n.l <- seq(10,110, by=10) 
 smp2.l <- lapply(n.l, FUN=function(x){eval.LH(springf, n=x, det.lim=.3)})  
 
 # evaluates stratification for 6 sampling intensities;  
 # Plot summary eval's:
 sumd <- lapply(smp2.l, slot, "eval")
 names(sumd) <- n.l
-plot(sumd[[1]], type="l", ylab="RMSE", ylim=c(0,max(sumd[[1]]$smpvar)), xlim=c(2,14))
+plot(sumd[[1]], type="l", ylab="Sampling design variance", ylim=c(0,max(sumd[[1]]$desvar)), xlim=c(2,14))
 for(j in 2:length(n.l)){
    lines(sumd[[j]], lty=j+1)
 }

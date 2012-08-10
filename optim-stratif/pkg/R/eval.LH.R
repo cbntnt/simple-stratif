@@ -96,7 +96,7 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     smp <- do.call(rbind, smp)
     proj4string(smp) <- obj@proj4string
 
-    out <- new("SpatialStratifiedSample", variable = tvar, locations = smp, strata = obj[c("strata","pprob")], LH = strata.LH, eval = data.frame(Ls=Ls.min:Ls, RMSE=unlist(RMSE), desvar = (unlist(RMSE))^2) )
+    out <- new("SpatialStratifiedSample", variable = tvar, locations = smp, strata = obj[c("strata","pprob")], LH = strata.LH, eval = data.frame(Ls=Ls.min:Ls, desvar = (unlist(RMSE))^2) )
     
     return(out)
 }    
@@ -108,10 +108,12 @@ setMethod("plot", signature(x = "SpatialStratifiedSample", y = "missing"), funct
   Ls = length(levels(x@strata@data[,1]))
   pal = rainbow(Ls)[rank(runif(Ls))]
   par(mfrow=c(1,2), mar=c(3.5,3.5,.5,.5), oma=c(0,0,0,0))
+  
+  
   # TO DO: specify aspect of the new window
   image(raster(x@strata[1]), col=pal, axes = FALSE, xlab="", ylab="")
   points(x@locations, pch="+", col="black", cex=1.2)
-  plot(x@eval$Ls, x@eval$smpvar, type="l", ylab="", xlab="")
+  plot(x@eval$Ls, x@eval$desvar, type="l", ylab="", xlab="")
 })
 
 
