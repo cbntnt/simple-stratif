@@ -63,9 +63,9 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     RMSE <- unlist(RMSE.out)
     desvar <- RMSE^2
     
-    # The best design:    
+    # The best design either specified design variance threshold or via 10% of initial 2 strata (Ls=2) design variance:    
     if(missing(desvar.t)) {
-        mout.m <- which(desvar==min(desvar))
+        mout.m <- which(desvar < (max(desvar)/100*10))[1]
     }
     else{ 
       mout.m <- which(desvar < desvar.t)[1] 
@@ -75,6 +75,8 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     }
     
     strata.LH <- mout[[mout.m[1]]]
+    
+        
                                                              
     # Step 2: cluster using the optimized classes
     obj$strata <- cut(x=obj@data[,tvar], breaks=c(strata.LH$bh, hmax), labels = paste("L", 1:nrow(strata.LH), sep=""), include.lowest = TRUE)
