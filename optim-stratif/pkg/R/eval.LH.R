@@ -71,11 +71,13 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
       mout.m <- which(desvar < desvar.t)[1] 
       if(is.na(mout.m)){
       stop("No designs are below the specified threshold value for the (predicted) sampling variance")
+      mout = NULL
       }
     }
     
     strata.LH <- mout[[mout.m[1]]]
     
+   
         
                                                              
     # Step 2: cluster using the optimized classes
