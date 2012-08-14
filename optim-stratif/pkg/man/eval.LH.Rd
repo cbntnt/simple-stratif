@@ -51,7 +51,7 @@ plot(smp1)
 
 # Test eval.LH (smp2) using varying n
 n.l <- seq(10,110, by=50) 
-smp2.l <- lapply(n.l, FUN=function(x){eval.LH(springf, n=x, det.lim=.3, desvar.t = 0.011)})  
+smp2.l <- lapply(n.l, FUN=function(x){eval.LH(springf, n = x, det.lim=.3, desvar.t = 0.011)})  
 
 # evaluates stratification for 6 sampling intensities;  
 # Plot summary eval's:
