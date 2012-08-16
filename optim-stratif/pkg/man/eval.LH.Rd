@@ -30,7 +30,7 @@ proj4string(springf) <- CRS("+init=epsg:28355")
 
 
 #1. Let method select design given n and matched with sampling variance of previous round (*note - need penalty (?) for underestimation of spatial variance ... only in first round?*) 
-smp1 <- eval.LH(springf, n=48, det.lim = 0.3, desvar.t = 0.011)
+smp1 <- eval.LH(springf, n=48, det.lim = 0.3, desvar.t = 50)
 
   #check smpvar.t as per RMSE (StdDev) and/or sampling var... not consistently applied????  
 
