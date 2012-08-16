@@ -70,7 +70,7 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
           else{
       mout.m <- which(desvar < desvar.t)[1]
       if(is.na(mout.m)){
-      stop("No designs are below the specified threshold value for the (predicted) sampling variance")
+      print("No designs are below the specified threshold value for the (predicted) sampling variance")
 
       }
     }
