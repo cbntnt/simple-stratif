@@ -70,11 +70,11 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
           else{
       mout.m <- which(desvar < desvar.t)[1]
       if(is.na(mout.m)){
-      print("No designs are below the specified threshold value for the (predicted) sampling variance")
-
+      warning("No designs are below the specified threshold value for the (predicted) sampling variance")
       }
     }
     
+    if(!is.na(mout.m)){
     strata.LH <- mout[[mout.m[1]]]
     
    # if(any(x==1))
@@ -101,6 +101,9 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     proj4string(smp) <- obj@proj4string
 
     out <- new("SpatialStratifiedSample", variable = tvar, locations = smp, strata = obj[c("strata","pprob")], LH = strata.LH, eval = data.frame(Ls=Ls.min:Ls, desvar = (unlist(RMSE))^2) )
+    } else {
+    out <- NULL
+    }
     
     return(out)
 }    
