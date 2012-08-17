@@ -35,4 +35,19 @@ download.file("http://simple-stratif.googlecode.com/svn/optim-stratif/pkg/data/s
 load("springf.rda")
 
 
+         ############################################################################################################
+
+#update GSIF
+install.packages(c("RCurl", "XML", "rgdal", "raster", "sp", "aqp", "mda", "gstat", "plotKML", "dismo", "rJava"))
+download.file("http://gsif.r-forge.r-project.org/GSIF_0.2-2.tar.gz", "GSIF_0.2-2.tar.gz")
+system("R CMD INSTALL GSIF_0.2-2.tar.gz")
+
+#update plotKML
+download.file("http://plotkml.r-forge.r-project.org/plotKML_0.2-4.tar.gz", "plotKML_0.2-4.tar.gz")
+system("R CMD INSTALL plotKML_0.2-4.tar.gz")
+
+                            download.file("http://cran.r-project.org/src/contrib/XML_3.9-4.tar.gz", "XML_3.9-4.tar.gz")
+[5:25:44 PM] Tomislav Hengl: system("Rcmd ...
+
+
 # end of script;
