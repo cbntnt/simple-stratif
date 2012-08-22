@@ -76,9 +76,7 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     
     if(!is.na(mout.m)){
     strata.LH <- mout[[mout.m[1]]]
-    
-   # if(any(x==1))
-        
+         
                                                              
     # Step 2: cluster using the optimized classes
     obj$strata <- cut(x=obj@data[,tvar], breaks=c(strata.LH$bh, hmax), labels = paste("L", 1:nrow(strata.LH), sep=""), include.lowest = TRUE)
@@ -104,10 +102,10 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     } else {
     out <- NULL
     }
-    
+  
     return(out)
 }    
-
+                                   
 # default plot method:
 setMethod("plot", signature(x = "SpatialStratifiedSample", y = "missing"), function(x){
   require(sp)
