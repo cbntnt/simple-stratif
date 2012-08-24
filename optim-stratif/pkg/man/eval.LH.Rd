@@ -56,24 +56,23 @@ smp2.l <- lapply(n.l, FUN=function(x){eval.LH(springf, n = x, det.lim=.3, desvar
 # evaluates stratification for n sampling intensities;  
 # Remove NULL elements - those that fail to satisfy stipulated design variance 
 while (is.null(smp2.l[[1]])) {smp2.l[[1]] <- NULL}
+# Remove n's associated with NULL elements
+l <- n.l[-((length(n.l) - length(smp2.l)))]
 # Plot summary eval's:
 sumd <- lapply(smp2.l, slot, "eval")
-
-#########################################################
-#How to attach names now?????      Maybe sum the distribution of n and use as vector to combine? 
-#######################################################
-names(sumd) <- n.l
-
-      #Error in names(sumd) <- n.l : 
-  #'names' attribute [3] must be the same length as the vector [2]
+names(sumd) <- l
                    
 
 plot(sumd[[1]], type="l", ylab="Sampling design variance", ylim=c(0,max(sumd[[1]]$desvar)), xlim=c(2,14))
-for(j in 2:length(n.l)){
+
+#issue where there are 2 slots only 
+
+for(j in 2:length(l)){
    lines(sumd[[j]], lty=j+1)
 }
+  
 # add legend:
-legend("topright", inset=.05, title="Sampling intensity (N)", as.character(n.l), lty=1:length(n.l), cex=.7) 
+legend("topright", inset=.05, title="Sampling intensity (n)", as.character(l), lty=1:length(l), cex=.7) 
 
 
 \dontrun{# plot the resulting design in GE:
