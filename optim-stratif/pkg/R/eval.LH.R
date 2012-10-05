@@ -63,6 +63,10 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     RMSE <- unlist(RMSE.out)
     desvar <- RMSE^2
     
+    ####################################
+    #insert penalty for underestimation of spatial variance here?     YES - creat corr_desvar
+    ####################################
+    
     # The best design either specified design variance threshold or via 10% of initial 2 strata (Ls=2) design variance:    
     if(missing(desvar.t)) {
         mout.m <- which(desvar < (max(desvar)/100*10))[1]
