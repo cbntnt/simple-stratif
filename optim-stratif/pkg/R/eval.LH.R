@@ -115,15 +115,18 @@ setMethod("plot", signature(x = "SpatialStratifiedSample", y = "missing"), funct
   require(raster)
   Ls = length(levels(x@strata@data[,1]))
   #pal = cm.colors(Ls)[rank(runif(Ls))]
-  pal = rev(palette(gray(seq(.4, .95, len = Ls))))
+  pal = rev(palette(gray(seq(.3, .85, len = Ls))))
 
-  windows(width = 8, height = 4)
+  windows(width = 9, height = 5)
   par(mfrow=c(1,2), mar=c(5,5,3.5,3.5), oma=c(0,0,0,0))
   
-  # TO DO: specify aspect of the new window
-  image(raster(x@strata[1]), col=pal, axes = TRUE, xlab="Northings", ylab="Eastings", main=paste("Number of strata chosen:", Ls))
-  points(x@locations, pch=17, col="black", cex=0.8)
-  plot(x@eval$Ls, x@eval$desvar, type="l", ylab="Sampling variance", xlab="Number of strata tested", lwd=2)
+  image(raster(x@strata[1]), col=pal, axes = TRUE, xlab="Northings", ylab="Eastings", main=paste("Optimal strata =", Ls), cex.main = 0.9, font = 1)
+  points(x@locations, pch=17, col="black", cex=0.6)
+  plot(x@eval$Ls, x@eval$desvar, type="l", ylab="Sampling variance", xlab="Tested strata", lwd=1)
+  
+  #optim <- c(x@eval$Ls, (sum(x@LH$desvar)*1/R2))   ... insert line of optimal Ls on right graph? 
+  
+  
 })
 
 
