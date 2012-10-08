@@ -6,11 +6,12 @@
  
 
 # evaluate different designs:
-eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desvar.t, pprob = 1, silent = FALSE){
+eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desvar.t, R2, pprob = 1, silent = FALSE){
     
     require(maptools)
     require(spatstat)
     require(stratification)
+    require(RSAGA)
 
     if(!class(obj)=="SpatialPixelsDataFrame"){
      stop("Object of class 'SpatialPixelsDataFrame' required for argument 'obj'")
@@ -61,12 +62,10 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     
     # RMSE = the root mean squared error (or standard deviation of the anticipated global mean); desvar = the sampling variance for the given design
     RMSE <- unlist(RMSE.out)
-    desvar <- RMSE^2
     
-    ####################################
-    #insert penalty for underestimation of spatial variance here?     YES - creat corr_desvar
-    ####################################
-    
+    # (sampling) design variance is penalised by 1/R2 to compensate for the underestimation of spatial variance by the spatial prediction model
+    desvar <- RMSE^2 * (1/R2) 
+      
     # The best design either specified design variance threshold or via 10% of initial 2 strata (Ls=2) design variance:    
     if(missing(desvar.t)) {
         mout.m <- which(desvar < (max(desvar)/100*10))[1]
@@ -102,7 +101,7 @@ eval.LH <- function(obj, tvar = names(obj)[1], n, det.lim, Ls, Ls.min = 2, desva
     smp <- do.call(rbind, smp)
     proj4string(smp) <- obj@proj4string
 
-    out <- new("SpatialStratifiedSample", variable = tvar, locations = smp, strata = obj[c("strata","pprob")], LH = strata.LH, eval = data.frame(Ls=Ls.min:Ls, desvar = (unlist(RMSE))^2) )
+    out <- new("SpatialStratifiedSample", variable = tvar, locations = smp, strata = obj[c("strata","pprob")], LH = strata.LH, eval = data.frame(Ls=Ls.min:Ls, desvar = (unlist(RMSE))^2 * (1/R2)) )
     } else {
     out <- NULL
     }
@@ -115,14 +114,16 @@ setMethod("plot", signature(x = "SpatialStratifiedSample", y = "missing"), funct
   require(sp)
   require(raster)
   Ls = length(levels(x@strata@data[,1]))
-  pal = rainbow(Ls)[rank(runif(Ls))]
-  par(mfrow=c(1,2), mar=c(3.5,3.5,.5,.5), oma=c(0,0,0,0))
-  
+  #pal = cm.colors(Ls)[rank(runif(Ls))]
+  pal = palette(gray(seq(0.4, 0.7, len = 20)))
+
+  par(mfrow=c(2,2), mar=c(5,5,3.5,3.5), oma=c(0,0,0,0))
+   #win.graph(width = 8, height = 4)
   
   # TO DO: specify aspect of the new window
-  image(raster(x@strata[1]), col=pal, axes = FALSE, xlab="", ylab="")
-  points(x@locations, pch="+", col="black", cex=1.2)
-  plot(x@eval$Ls, x@eval$desvar, type="l", ylab="", xlab="")
+  image(raster(x@strata[1]), col=pal, axes = TRUE, xlab="Northings", ylab="Eastings")
+  points(x@locations, pch=17, col="black", cex=0.8)
+  plot(x@eval$Ls, x@eval$desvar, type="l", ylab="Sampling variance", xlab="Number of strata tested")
 })
 
 
