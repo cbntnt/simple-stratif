@@ -117,8 +117,8 @@ setMethod("plot", signature(x = "SpatialStratifiedSample", y = "missing"), funct
   #pal = cm.colors(Ls)[rank(runif(Ls))]
   pal = rev(palette(gray(seq(.4, .95, len = Ls))))
 
+  windows(width = 8, height = 4)
   par(mfrow=c(1,2), mar=c(5,5,3.5,3.5), oma=c(0,0,0,0))
-   #win.graph(width = 8, height = 4)
   
   # TO DO: specify aspect of the new window
   image(raster(x@strata[1]), col=pal, axes = TRUE, xlab="Northings", ylab="Eastings", main=paste("Number of strata chosen:", Ls))
