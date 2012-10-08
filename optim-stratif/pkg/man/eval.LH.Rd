@@ -30,7 +30,7 @@ proj4string(springf) <- CRS("+init=epsg:28355")
 
 
 #1. Let method select design given n and matched with sampling variance of previous round (*note - need penalty (?) for underestimation of spatial variance ... only in first round?*) 
-smp1 <- eval.LH(springf, n=48, det.lim = 0.3, desvar.t = 0.011)
+smp1 <- eval.LH(springf, n=48, det.lim = 0.3, desvar.t = 0.05, R2 = 0.24)
 
   #check smpvar.t as per RMSE (StdDev) and/or sampling var... not consistently applied????  
 
@@ -51,7 +51,9 @@ plot(smp1)
 
 # Test eval.LH (smp2) using varying n
 n.l <- seq(10,110, by=50) 
-smp2.l <- lapply(n.l, FUN=function(x){eval.LH(springf, n = x, det.lim=.3, desvar.t = 0.011)})  
+smp2.l <- lapply(n.l, FUN=function(x){eval.LH(springf, n = x, det.lim=.3, desvar.t = 0.05, R2 = 0.24)})  
+
+#R2 = 0.24
 
 # evaluates stratification for n sampling intensities;  
 # Remove NULL elements - those that fail to satisfy stipulated design variance 
